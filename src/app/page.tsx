@@ -1,25 +1,23 @@
 'use client';
 
 import { useAccount, useConnect, useDisconnect, useBalance, useReadContract, useWriteContract, useWaitForTransactionReceipt, useSwitchChain } from 'wagmi';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import { formatUnits } from 'viem';
 import { greeterAbi } from '../lib/abi';
 import { monadTestnet } from '../lib/config';
+
+const emptySubscribe = () => () => {};
 
 export default function Home() {
   const { address, isConnected, chainId } = useAccount();
   const { connectors, connect, error, isError } = useConnect();
   const { switchChain } = useSwitchChain();
   const { disconnect } = useDisconnect();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [showContract, setShowContract] = useState(false);
   const [newGreeting, setNewGreeting] = useState('');
   
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
   
   const { data: balanceData } = useBalance({
     address: address,
@@ -41,7 +39,8 @@ export default function Home() {
   useEffect(() => {
     if (isConfirmed) {
       refetchGreeting();
-      setNewGreeting('');
+      const timer = setTimeout(() => setNewGreeting(''), 0);
+      return () => clearTimeout(timer);
     }
   }, [isConfirmed, refetchGreeting]);
 
@@ -97,6 +96,11 @@ export default function Home() {
               <div className="w-full bg-gray-900/50 p-4 rounded-xl border border-gray-700/50 break-all">
                 <p className="text-gray-400 text-xs mb-1">Wallet Address</p>
                 <p className="font-mono text-sm">{address}</p>
+                {balanceData && (
+                  <p className="text-xs text-emerald-400 mt-2 font-mono">
+                    Balance: {Number(formatUnits(balanceData.value, balanceData.decimals)).toFixed(4)} {balanceData.symbol}
+                  </p>
+                )}
               </div>
 
               <div className="w-full bg-gray-900/50 p-4 rounded-xl border border-gray-700/50">
