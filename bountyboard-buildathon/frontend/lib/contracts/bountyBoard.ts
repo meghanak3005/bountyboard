@@ -1,5 +1,4 @@
-// Automatically exported from backend deployment
-export const BOUNTY_BOARD_ADDRESS = "0x71528633DccB61CE9bfed69085b268A7BF81fd85" as const;
+export const BOUNTY_BOARD_ADDRESS = ((process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`) || "0x71528633DccB61CE9bfed69085b268A7BF81fd85") as `0x${string}`;
 export const BOUNTY_BOARD_ABI = [
   {
     "anonymous": false,

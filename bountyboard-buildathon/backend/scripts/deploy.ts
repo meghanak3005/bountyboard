@@ -42,9 +42,9 @@ async function main() {
 
     // Write TypeScript contract configuration
     const tsContent = `// Automatically exported from backend deployment
-export const BOUNTY_BOARD_ADDRESS = "${contractAddress}" as const;
-export const BOUNTY_BOARD_ABI = ${JSON.stringify(artifact.abi, null, 2)} as const;
-`;
+export const BOUNTY_BOARD_ADDRESS = "${contractAddress}" as \`0x\${string}\`;
+export const BOUNTY_BOARD_ABI = \${JSON.stringify(artifact.abi, null, 2)} as const;
+\`;
     fs.writeFileSync(path.join(frontendDir, "bountyBoard.ts"), tsContent);
     console.log("Exported ABI and contract configuration to frontend/lib/contracts/bountyBoard.ts");
   }
